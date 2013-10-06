@@ -1,0 +1,8 @@
+[Desktop Entry]
+Name=ownCloud
+Exec=sensible-browser http://owncloud.utcsheffield.org.uk/
+Icon=/home/pi/ownCloud.png
+Terminal=false
+Type=Application
+Categories=Application;Education;
+StartupNotify=true

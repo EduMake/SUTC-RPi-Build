@@ -1,0 +1,90 @@
+Edumake RPI Notes: UTC build
+The UTC RPis are at time of writing:
+Model: RPi Model B
+Storage: 4 GB SD
+Wifi dongle: Dynamode WL-700N-RXS
+
+Note: the version of the dongle we have uses the MediaTek MT7601 chipset - this is currently NOT supported by the standard kernel drivers. It reports a usb id of 148f:7601:
+
+pi@utcpi001 ~ $ lsusb
+Bus 001 Device 002: ID 0424:9512 Standard Microsystems Corp. 
+Bus 001 Device 001: ID 1d6b:0002 Linux Foundation 2.0 root hub
+Bus 001 Device 003: ID 0424:ec00 Standard Microsystems Corp. 
+Bus 001 Device 004: ID 148f:7601 Ralink Technology, Corp. 
+:
+:
+
+Original Image Set Up:
+- Used image as supplied by CPC
+- Plugged in another *supported* dongle
+
+<commands>
+sudo raspi-config
+# Do: 1. Expand Filesystem
+# Rebooted
+
+# Add guest passphrase securely to wpa config:
+sudo sh -c "wpa_passphrase *censored:ssid* *censored:password* | grep -v \# >>/etc/wpa_supplicant/wpa_supplicant.conf"
+
+sudo apt-get update
+sudo apt-get upgrade
+sudo raspi-config
+# Do:
+# 4. Internationalisation options ->
+# 	I1 Change Locale ->
+#		Ensure all en_GB and en_US locales are selected
+#		Keep default as en_GB.utf8
+#	I2 Change Timezone ->
+#		Europe
+#		London
+# 8. Advanced ->
+#	A2 Hostname ->
+#		utcpi001
+#	A4 SSH ->
+#		enable
+#
+sudo apt-get install git	
+</commands>
+
+stole icon for ownCloud (this now now on git)
+created desktop link for ownCloud (this is now on git)
+
+Compiling MT7601 driver
+-----------------------
+borrowed get-kernel-source.sh (from https://gist.github.com/azbesthu/3893319):
+<commands>
+wget https://gist.github.com/azbesthu/3893319/raw/10466f22607f4788adf3a4ea51fc108fca16b504/get-kernel-source.sh
+chmod +x get-kernel-source.sh
+sudo ./get-kernel-source.sh
+</commands>
+Got 3.0.0.4 MT7601 offical tar ball for http://www.mediatek.com (not easily linkable: Home -> Downloads -> Linux -> MT7601U USB	09/13/2013	v3.0.0.4)
+<commands>
+mkdir ~/src
+cd ~/src
+tar jxvf ../DPO_MT7601U_LinuxSTA_*.tar.bz2
+cd DPO_MT7601U_LinuxSTA_*
+make
+sudo mkdir -p /etc/Wireless/RT2870STA/
+sudo cp RT2870STA.dat /etc/Wireless/RT2870STA/
+sudo cp os/linux/*.ko /lib/modules/3.6.11+/kernel/drivers/net/wireless/
+sudo depmod -a
+sudo nano /etc/network/interfaces
+<edits>
+ auto lo
+ 
+ iface lo inet loopback
+ iface eth0 inet dhcp
+ 
+-allow-hotplug wlan0
++allow-hotplug ra0 wlan0
++iface ra0 inet manual
++wpa-roam /etc/wpa_supplicant/wpa_supplicant.conf
+ iface wlan0 inet manual
+ wpa-roam /etc/wpa_supplicant/wpa_supplicant.conf
+ iface default inet dhcp
+</edits>
+sudo reboot
+</commands>
+Assuming wireless works, update the git repo and then remove junk:
+<commands>
+</commands>
