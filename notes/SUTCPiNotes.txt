@@ -52,6 +52,7 @@ created desktop link for ownCloud (this is now on git)
 Compiling MT7601 driver
 -----------------------
 borrowed get-kernel-source.sh (from https://gist.github.com/azbesthu/3893319):
+(now in tools folder in repo)
 <commands>
 wget https://gist.github.com/azbesthu/3893319/raw/10466f22607f4788adf3a4ea51fc108fca16b504/get-kernel-source.sh
 chmod +x get-kernel-source.sh
@@ -87,4 +88,25 @@ sudo reboot
 </commands>
 Assuming wireless works, update the git repo and then remove junk:
 <commands>
+rm ~/DPO_MT7601U_LinuxSTA_*.tar.gz
+rm -rf ~/DPO_MT7601U_LinuxSTA_*/
+sudo ./src/SUTC-RPi-Build/tools/remove-kernel-source.sh
+</commands>
+
+Additional software
+<commands>
+sudo apt-get install oracle-java7-jdk
+wget https://s3.amazonaws.com/assets.minecraft.net/pi/minecraft-pi-0.1.1.tar.gz
+tar xvf minecraft-pi-0.1.1.tar.gz
+sudo apt-get install git
+git clone https://github.com/EduMake/rpi-learning.git
+cd rpi-learning
+git submodule init
+git submodule update
+</commands>
+
+Set up proxy
+<commands>
+sudo sh -c "echo export http_proxy=\"http//10.4.32.27:3128/\" > /etc/environment"
+sudo cp ~/src/SUTC-RPi-Build/etc/apt/apt.conf.d/ /etc/apt/apt.conf.d/10proxy
 </commands>

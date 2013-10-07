@@ -1,0 +1,9 @@
+[Desktop Entry]
+Name=Minecraft Pi Edition
+Comment=
+Exec=/home/pi/mcpi/minecraft-pi
+Icon=/home/pi/minecraft-64px.png
+Terminal=false
+Type=Application
+Categories=Application;Games;
+StartupNotify=true
